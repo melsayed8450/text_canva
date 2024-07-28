@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 
-typedef void OnWidgetSizeChange(Size size);
+typedef OnWidgetSizeChange = void Function(Size size);
 
 class MeasureSizeRenderObject extends RenderProxyBox {
   Size? oldSize;
@@ -28,10 +28,10 @@ class MeasureSize extends SingleChildRenderObjectWidget {
   final OnWidgetSizeChange onChange;
 
   const MeasureSize({
-    Key? key,
+    super.key,
     required this.onChange,
     required Widget child,
-  }) : super(key: key, child: child);
+  }) : super(child: child);
 
   @override
   RenderObject createRenderObject(BuildContext context) {
