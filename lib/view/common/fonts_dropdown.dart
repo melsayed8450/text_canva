@@ -3,25 +3,22 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:text_canva/utils/app_colors.dart';
 
 class FontsDropDown extends StatefulWidget {
   final Function(String)? onSelected;
-  final String label;
   final OverlayPortalController controller;
   final void Function() hideDropDown;
   final void Function() showDropDown;
   final String value;
-  // final FocusNode focusNode;
 
   const FontsDropDown({
     super.key,
     this.onSelected,
-    required this.label,
     required this.controller,
     required this.hideDropDown,
     required this.showDropDown,
     required this.value,
-    // required this.focusNode,
   });
 
   @override
@@ -41,6 +38,15 @@ class FontsDropDownState extends State<FontsDropDown> {
   bool canLoadmore = true;
   final int itemsPerPage = 20;
   late int pagesCount;
+
+  @override
+  void didUpdateWidget(covariant FontsDropDown oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.value != widget.value) {
+      _textController = TextEditingController(text: widget.value);
+      _textController.addListener(onFilter);
+    }
+  }
 
   @override
   void initState() {
@@ -172,9 +178,31 @@ class FontsDropDownState extends State<FontsDropDown> {
             onTap: () {
               widget.showDropDown();
             },
-            // focusNode: widget.focusNode,
+
             decoration: InputDecoration(
-              labelText: widget.label,
+              hintText: 'Search for a font',
+              border: OutlineInputBorder(
+                borderSide: const BorderSide(
+                  color: AppColors.primaryColor,
+                ),
+                borderRadius: BorderRadius.circular(15.r),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: const BorderSide(
+                  color: AppColors.primaryColor,
+                ),
+                borderRadius: BorderRadius.circular(15.r),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide: const BorderSide(
+                  color: AppColors.primaryColor,
+                ),
+                borderRadius: BorderRadius.circular(15.r),
+              ),
+              hintStyle: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w500,
+              ),
             ),
             // enabled: false,
           ),

@@ -38,23 +38,15 @@ class MyApp extends StatelessWidget {
               debugShowCheckedModeBanner: false,
               routerConfig: router,
               theme: ThemeData(
-                  colorScheme:
-                      ColorScheme.fromSeed(seedColor: AppColors.primaryColor),
-                  primaryColor: AppColors.primaryColor,
-                  primaryColorDark: AppColors.primaryColorDark,
-                  bottomSheetTheme: const BottomSheetThemeData(
-                      backgroundColor: Colors.white, modalElevation: 0),
-                  useMaterial3: true,
-                  pageTransitionsTheme: const PageTransitionsTheme(builders: {
-                    TargetPlatform.android: CupertinoPageTransitionsBuilder()
-                  }),
-                  textTheme: GoogleFonts.poppinsTextTheme().copyWith(
-                      bodyLarge: GoogleFonts.poppins(),
-                      bodyMedium: GoogleFonts.poppins()),
-                  fontFamily: GoogleFonts.poppins().fontFamily,
-                  progressIndicatorTheme: const ProgressIndicatorThemeData(
-                    color: AppColors.primaryColor,
-                  )),
+                useMaterial3: true,
+                textTheme: GoogleFonts.poppinsTextTheme().copyWith(
+                    bodyLarge: GoogleFonts.poppins(),
+                    bodyMedium: GoogleFonts.poppins()),
+                fontFamily: GoogleFonts.poppins().fontFamily,
+                progressIndicatorTheme: const ProgressIndicatorThemeData(
+                  color: AppColors.primaryColor,
+                ),
+              ),
             );
           }),
         ));

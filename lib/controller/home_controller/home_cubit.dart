@@ -12,15 +12,7 @@ class HomeCubit extends Cubit<HomeState> {
   }
   void init() {
     updateHomeProperty(
-      HomeProperty(
-        textItems: [
-          TextItem(
-            controller: TextEditingController(text: 'New Text'),
-            left: 120.sp,
-            top: 150.sp,
-          ),
-        ],
-      ),
+      const HomeProperty(),
     );
   }
 
@@ -146,7 +138,7 @@ class HomeCubit extends Cubit<HomeState> {
     emit(
       state.copyWith(
         properties: [
-          ...state.properties.getRange(0, state.currentpPropertyIndex + 1),
+          ...state.properties.take(state.currentpPropertyIndex + 1),
           property,
         ],
         currentpPropertyIndex: state.currentpPropertyIndex + 1,
@@ -168,12 +160,20 @@ class HomeCubit extends Cubit<HomeState> {
   void undo() {
     if (state.currentpPropertyIndex <= 0) return;
     emit(
-        state.copyWith(currentpPropertyIndex: state.currentpPropertyIndex - 1));
+      state.copyWith(
+        currentpPropertyIndex: state.currentpPropertyIndex - 1,
+        selectedTextIndex: null,
+      ),
+    );
   }
 
   void redo() {
     if (state.currentpPropertyIndex >= state.properties.length) return;
     emit(
-        state.copyWith(currentpPropertyIndex: state.currentpPropertyIndex + 1));
+      state.copyWith(
+        currentpPropertyIndex: state.currentpPropertyIndex + 1,
+        selectedTextIndex: null,
+      ),
+    );
   }
 }
