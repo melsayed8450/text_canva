@@ -16,26 +16,28 @@ class HomeCubit extends Cubit<HomeState> {
         textItems: [
           TextItem(
             controller: TextEditingController(text: 'New Text'),
+            left: 120.sp,
+            top: 150.sp,
           ),
         ],
       ),
     );
   }
 
-  void updateSelectedItemIndex(int index) {
+  void updateSelectedItemIndex(int? index) {
     emit(
       state.copyWith(
         selectedTextIndex: index,
       ),
     );
-    // emit(state.copyWith(selectedTextIndex: index));
   }
 
   void updatePanMove(DragUpdateDetails details) {
+    if (state.selectedTextIndex == null) return;
     HomeProperty property = state.properties[state.currentpPropertyIndex];
-    TextItem currentItem = property.textItems[state.selectedTextIndex];
+    TextItem currentItem = property.textItems[state.selectedTextIndex!];
     updateTextItem(
-      state.selectedTextIndex,
+      state.selectedTextIndex!,
       currentItem.copyWith(
         left: max(
           0,
@@ -56,10 +58,11 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   void updateFontStyle(String style) {
+    if (state.selectedTextIndex == null) return;
     HomeProperty property = state.properties[state.currentpPropertyIndex];
-    TextItem currentItem = property.textItems[state.selectedTextIndex];
+    TextItem currentItem = property.textItems[state.selectedTextIndex!];
     updateTextItem(
-      state.selectedTextIndex,
+      state.selectedTextIndex!,
       currentItem.copyWith(
         style: style,
       ),
@@ -78,6 +81,8 @@ class HomeCubit extends Cubit<HomeState> {
         textItems: [
           ...property.textItems,
           TextItem(
+            left: 120.sp,
+            top: 150.sp,
             controller: TextEditingController(
               text: 'New Text',
             ),
@@ -93,10 +98,11 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   void updateTextColor(Color color) {
+    if (state.selectedTextIndex == null) return;
     HomeProperty property = state.properties[state.currentpPropertyIndex];
-    TextItem currentItem = property.textItems[state.selectedTextIndex];
+    TextItem currentItem = property.textItems[state.selectedTextIndex!];
     updateTextItem(
-      state.selectedTextIndex,
+      state.selectedTextIndex!,
       currentItem.copyWith(
         color: color,
       ),
@@ -104,10 +110,11 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   void updateTextSize(int size) {
+    if (state.selectedTextIndex == null) return;
     HomeProperty property = state.properties[state.currentpPropertyIndex];
-    TextItem currentItem = property.textItems[state.selectedTextIndex];
+    TextItem currentItem = property.textItems[state.selectedTextIndex!];
     updateTextItem(
-      state.selectedTextIndex,
+      state.selectedTextIndex!,
       currentItem.copyWith(
         size: size,
       ),
@@ -115,10 +122,11 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   void updateTextText(String text) {
+    if (state.selectedTextIndex == null) return;
     HomeProperty property = state.properties[state.currentpPropertyIndex];
-    TextItem currentItem = property.textItems[state.selectedTextIndex];
+    TextItem currentItem = property.textItems[state.selectedTextIndex!];
     updateTextItem(
-      state.selectedTextIndex,
+      state.selectedTextIndex!,
       currentItem.copyWith(
         text: text,
       ),

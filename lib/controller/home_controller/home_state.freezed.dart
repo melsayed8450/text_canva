@@ -19,7 +19,7 @@ mixin _$HomeState {
   List<HomeProperty> get properties => throw _privateConstructorUsedError;
   int get currentpPropertyIndex => throw _privateConstructorUsedError;
   Size get selectedTextSize => throw _privateConstructorUsedError;
-  int get selectedTextIndex => throw _privateConstructorUsedError;
+  int? get selectedTextIndex => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $HomeStateCopyWith<HomeState> get copyWith =>
@@ -35,7 +35,7 @@ abstract class $HomeStateCopyWith<$Res> {
       {List<HomeProperty> properties,
       int currentpPropertyIndex,
       Size selectedTextSize,
-      int selectedTextIndex});
+      int? selectedTextIndex});
 }
 
 /// @nodoc
@@ -54,7 +54,7 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
     Object? properties = null,
     Object? currentpPropertyIndex = null,
     Object? selectedTextSize = null,
-    Object? selectedTextIndex = null,
+    Object? selectedTextIndex = freezed,
   }) {
     return _then(_value.copyWith(
       properties: null == properties
@@ -69,10 +69,10 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
           ? _value.selectedTextSize
           : selectedTextSize // ignore: cast_nullable_to_non_nullable
               as Size,
-      selectedTextIndex: null == selectedTextIndex
+      selectedTextIndex: freezed == selectedTextIndex
           ? _value.selectedTextIndex
           : selectedTextIndex // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
     ) as $Val);
   }
 }
@@ -89,7 +89,7 @@ abstract class _$$HomeStateImplCopyWith<$Res>
       {List<HomeProperty> properties,
       int currentpPropertyIndex,
       Size selectedTextSize,
-      int selectedTextIndex});
+      int? selectedTextIndex});
 }
 
 /// @nodoc
@@ -106,7 +106,7 @@ class __$$HomeStateImplCopyWithImpl<$Res>
     Object? properties = null,
     Object? currentpPropertyIndex = null,
     Object? selectedTextSize = null,
-    Object? selectedTextIndex = null,
+    Object? selectedTextIndex = freezed,
   }) {
     return _then(_$HomeStateImpl(
       properties: null == properties
@@ -121,10 +121,10 @@ class __$$HomeStateImplCopyWithImpl<$Res>
           ? _value.selectedTextSize
           : selectedTextSize // ignore: cast_nullable_to_non_nullable
               as Size,
-      selectedTextIndex: null == selectedTextIndex
+      selectedTextIndex: freezed == selectedTextIndex
           ? _value.selectedTextIndex
           : selectedTextIndex // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
     ));
   }
 }
@@ -133,10 +133,10 @@ class __$$HomeStateImplCopyWithImpl<$Res>
 
 class _$HomeStateImpl implements _HomeState {
   const _$HomeStateImpl(
-      {final List<HomeProperty> properties = const [HomeProperty()],
+      {final List<HomeProperty> properties = const [],
       this.currentpPropertyIndex = 0,
-      this.selectedTextSize = const Size(15, 15),
-      this.selectedTextIndex = 0})
+      this.selectedTextSize = const Size(0, 0),
+      this.selectedTextIndex = null})
       : _properties = properties;
 
   final List<HomeProperty> _properties;
@@ -156,7 +156,7 @@ class _$HomeStateImpl implements _HomeState {
   final Size selectedTextSize;
   @override
   @JsonKey()
-  final int selectedTextIndex;
+  final int? selectedTextIndex;
 
   @override
   String toString() {
@@ -198,7 +198,7 @@ abstract class _HomeState implements HomeState {
       {final List<HomeProperty> properties,
       final int currentpPropertyIndex,
       final Size selectedTextSize,
-      final int selectedTextIndex}) = _$HomeStateImpl;
+      final int? selectedTextIndex}) = _$HomeStateImpl;
 
   @override
   List<HomeProperty> get properties;
@@ -207,7 +207,7 @@ abstract class _HomeState implements HomeState {
   @override
   Size get selectedTextSize;
   @override
-  int get selectedTextIndex;
+  int? get selectedTextIndex;
   @override
   @JsonKey(ignore: true)
   _$$HomeStateImplCopyWith<_$HomeStateImpl> get copyWith =>

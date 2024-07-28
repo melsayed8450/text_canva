@@ -8,8 +8,8 @@ class HomeState with _$HomeState {
   const factory HomeState({
     @Default([]) List<HomeProperty> properties,
     @Default(0) int currentpPropertyIndex,
-    @Default(Size(15, 15)) Size selectedTextSize,
-    @Default(0) int selectedTextIndex,
+    @Default(Size(0, 0)) Size selectedTextSize,
+    @Default(null) int? selectedTextIndex,
   }) = _HomeState;
 }
 

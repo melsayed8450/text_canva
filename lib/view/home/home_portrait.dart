@@ -60,6 +60,7 @@ class HomePortrait extends StatelessWidget {
       onTap: () {
         hideDropDown();
         FocusScope.of(context).unfocus();
+        context.read<HomeCubit>().updateSelectedItemIndex(null);
       },
       child: ValueListenableBuilder<bool>(
         valueListenable: _isDropdownOpen,
@@ -196,8 +197,10 @@ class HomePortrait extends StatelessWidget {
                           children: [
                             Text('Size'),
                             DropdownMenu<int>(
-                              initialSelection: property
-                                  .textItems[state.selectedTextIndex].size,
+                              initialSelection: state.selectedTextIndex == null
+                                  ? 16
+                                  : property
+                                      .textItems[state.selectedTextIndex!].size,
                               onSelected: (value) {
                                 if (value == null) return;
                                 cubit.updateTextSize(value);
@@ -218,15 +221,20 @@ class HomePortrait extends StatelessWidget {
                               onPressed: () {
                                 changeColor(
                                   context: context,
-                                  pickerColor: property
-                                      .textItems[state.selectedTextIndex].color,
+                                  pickerColor: state.selectedTextIndex == null
+                                      ? Colors.black
+                                      : property
+                                          .textItems[state.selectedTextIndex!]
+                                          .color,
                                   changeColor: (color) {
                                     cubit.updateTextColor(color);
                                   },
                                 );
                               },
-                              color: property
-                                  .textItems[state.selectedTextIndex].color,
+                              color: state.selectedTextIndex == null
+                                  ? Colors.black
+                                  : property.textItems[state.selectedTextIndex!]
+                                      .color,
                               icon: Icon(
                                 Icons.circle,
                                 size: 30.sp,
@@ -257,8 +265,11 @@ class HomePortrait extends StatelessWidget {
                                 hideDropDown: hideDropDown,
                                 showDropDown: showDropDown,
                                 label: 'Fonts',
-                                value: property
-                                    .textItems[state.selectedTextIndex].style,
+                                value: state.selectedTextIndex == null
+                                    ? ''
+                                    : property
+                                        .textItems[state.selectedTextIndex!]
+                                        .style,
                                 onSelected: (font) {
                                   cubit.updateFontStyle(font);
                                 },
