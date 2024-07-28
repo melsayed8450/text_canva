@@ -137,15 +137,14 @@ class FontsDropDownState extends State<FontsDropDown> {
                       if (index >= displayedFontNames.length) {
                         return const CircularProgressIndicator();
                       }
+                      String currentFont = _textController.text.isEmpty
+                          ? displayedFontNames[index]
+                          : filteredFontNames[index];
                       return ListTile(
                         title: Text(
-                          _textController.text.isEmpty
-                              ? displayedFontNames[index]
-                              : filteredFontNames[index],
+                          currentFont,
                           style: GoogleFonts.getFont(
-                            _textController.text.isEmpty
-                                ? displayedFontNames[index]
-                                : filteredFontNames[index],
+                            currentFont,
                             color: Colors.black,
                             fontSize: 18.sp,
                           ),
@@ -153,8 +152,8 @@ class FontsDropDownState extends State<FontsDropDown> {
                         // title: Text(index.toString()),
                         onTap: () {
                           widget.hideDropDown();
-                          widget.onSelected?.call(displayedFontNames[index]);
-                          _textController.text = displayedFontNames[index];
+                          widget.onSelected?.call(currentFont);
+                          _textController.text = currentFont;
                           setState(() {});
                         },
                       );

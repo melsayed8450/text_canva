@@ -59,7 +59,6 @@ class HomePortrait extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         hideDropDown();
-        // _fontsFocusNode.unfocus();
         FocusScope.of(context).unfocus();
       },
       child: ValueListenableBuilder<bool>(
@@ -135,6 +134,9 @@ class HomePortrait extends StatelessWidget {
                                 },
                                 // onPan
                                 onTap: () {
+                                  if (state.selectedTextIndex != textItem.key) {
+                                    FocusScope.of(context).unfocus();
+                                  }
                                   cubit.updateSelectedItemIndex(textItem.key);
                                 },
                                 child: MeasureSize(
@@ -167,6 +169,9 @@ class HomePortrait extends StatelessWidget {
                                           textItem.value.style,
                                           color: textItem.value.color,
                                           fontSize: textItem.value.size.sp,
+                                        ),
+                                        decoration: const InputDecoration(
+                                          border: InputBorder.none,
                                         ),
                                       ),
                                     ),
