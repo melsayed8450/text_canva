@@ -12,12 +12,7 @@ import 'package:text_canva/utils/methods.dart';
 
 Future<void> main() async {
   await setupInitial();
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.landscapeRight,
-    DeviceOrientation.landscapeLeft,
-    DeviceOrientation.portraitDown,
-    DeviceOrientation.portraitUp
-  ]);
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(const MyApp());
 }
 
@@ -28,9 +23,7 @@ class MyApp extends StatelessWidget {
     return BlocProvider(
         create: (_) => HomeCubit(),
         child: ScreenUtilInit(
-          designSize: MediaQuery.of(context).orientation == Orientation.portrait
-              ? const Size(410, 889)
-              : const Size(889, 410),
+          designSize:const Size(410, 889),
           child: Builder(builder: (context) {
             log("building whole app");
             return MaterialApp.router(
