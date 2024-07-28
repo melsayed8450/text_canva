@@ -166,7 +166,8 @@ class HomePortrait extends StatelessWidget {
                             builder: (context, state) {
                               final cubit = context.read<HomeCubit>();
                               HomeProperty property =
-                                  state.properties[state.currentpPropertyIndex];
+                                  state.selectedHomeProperty;
+                              DragUpdateDetails? updateDetails;
                               if (property.textItems.isEmpty) {
                                 return GestureDetector(
                                   onTap: () {
@@ -238,9 +239,13 @@ class HomePortrait extends StatelessWidget {
                                       onPanUpdate: (details) {
                                         cubit.updateSelectedItemIndex(
                                             textItem.key);
-                                        cubit.updatePanMove(details);
+                                        cubit.updateTempPanMove(details);
+                                        updateDetails = details;
                                       },
-                                      // onPan
+                                      onPanEnd: (details) {
+                                        if (updateDetails == null) return;
+                                        cubit.updatePanMove(updateDetails!);
+                                      },
                                       onTap: () {
                                         if (state.selectedTextIndex !=
                                             textItem.key) {
@@ -260,10 +265,12 @@ class HomePortrait extends StatelessWidget {
                                         },
                                         child: Container(
                                           decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(15.r),
                                             border: Border.all(
                                               color: textItem.key ==
                                                       state.selectedTextIndex
-                                                  ? Colors.black
+                                                  ? AppColors.green
                                                   : Colors.transparent,
                                               width: 1.sp,
                                             ),
@@ -366,9 +373,7 @@ class HomePortrait extends StatelessWidget {
                   BlocBuilder<HomeCubit, HomeState>(
                     builder: (context, state) {
                       final cubit = context.read<HomeCubit>();
-                      HomeProperty property =
-                          state.properties[state.currentpPropertyIndex];
-
+                      HomeProperty property = state.selectedHomeProperty;
                       return Row(
                         children: [
                           Text(
@@ -421,8 +426,7 @@ class HomePortrait extends StatelessWidget {
                   BlocBuilder<HomeCubit, HomeState>(
                     builder: (context, state) {
                       final cubit = context.read<HomeCubit>();
-                      HomeProperty property =
-                          state.properties[state.currentpPropertyIndex];
+                      HomeProperty property = state.selectedHomeProperty;
                       return SizedBox(
                         width: double.maxFinite,
                         height: 70.h,

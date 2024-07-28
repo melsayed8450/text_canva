@@ -6,6 +6,7 @@ part 'home_state.freezed.dart';
 @freezed
 class HomeState with _$HomeState {
   const factory HomeState({
+    required HomeProperty selectedHomeProperty,
     @Default([]) List<HomeProperty> properties,
     @Default(-1) int currentpPropertyIndex,
     @Default(Size(0, 0)) Size selectedTextSize,

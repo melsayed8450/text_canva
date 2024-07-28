@@ -7,7 +7,12 @@ import 'package:text_canva/controller/home_controller/home_state.dart';
 import 'package:text_canva/model/text_item.dart';
 
 class HomeCubit extends Cubit<HomeState> {
-  HomeCubit() : super(const HomeState()) {
+  HomeCubit()
+      : super(
+          const HomeState(
+            selectedHomeProperty: HomeProperty(),
+          ),
+        ) {
     init();
   }
   void init() {
@@ -26,9 +31,34 @@ class HomeCubit extends Cubit<HomeState> {
 
   void updatePanMove(DragUpdateDetails details) {
     if (state.selectedTextIndex == null) return;
-    HomeProperty property = state.properties[state.currentpPropertyIndex];
-    TextItem currentItem = property.textItems[state.selectedTextIndex!];
+    TextItem currentItem =
+        state.selectedHomeProperty.textItems[state.selectedTextIndex!];
     updateTextItem(
+      state.selectedTextIndex!,
+      currentItem.copyWith(
+        left: max(
+          0,
+          min(
+            350.sp - state.selectedTextSize.width - 2.sp,
+            currentItem.left + details.delta.dx,
+          ),
+        ),
+        top: max(
+          0,
+          min(
+            350.sp - state.selectedTextSize.height - 2.sp,
+            currentItem.top + details.delta.dy,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void updateTempPanMove(DragUpdateDetails details) {
+    if (state.selectedTextIndex == null) return;
+    TextItem currentItem =
+        state.selectedHomeProperty.textItems[state.selectedTextIndex!];
+    updateTempTextItem(
       state.selectedTextIndex!,
       currentItem.copyWith(
         left: max(
@@ -51,8 +81,8 @@ class HomeCubit extends Cubit<HomeState> {
 
   void updateFontStyle(String style) {
     if (state.selectedTextIndex == null) return;
-    HomeProperty property = state.properties[state.currentpPropertyIndex];
-    TextItem currentItem = property.textItems[state.selectedTextIndex!];
+    TextItem currentItem =
+        state.selectedHomeProperty.textItems[state.selectedTextIndex!];
     updateTextItem(
       state.selectedTextIndex!,
       currentItem.copyWith(
@@ -63,15 +93,13 @@ class HomeCubit extends Cubit<HomeState> {
 
   void updateSelectedTextSize(Size size) {
     emit(state.copyWith(selectedTextSize: size));
-    // emit(state.copyWith(selectedTextSize: size));
   }
 
   void addTextItem() {
-    HomeProperty property = state.properties[state.currentpPropertyIndex];
     updateHomeProperty(
-      property.copyWith(
+      state.selectedHomeProperty.copyWith(
         textItems: [
-          ...property.textItems,
+          ...state.selectedHomeProperty.textItems,
           TextItem(
             left: 120.sp,
             top: 150.sp,
@@ -84,15 +112,15 @@ class HomeCubit extends Cubit<HomeState> {
     );
     emit(
       state.copyWith(
-        selectedTextIndex: property.textItems.length,
+        selectedTextIndex: state.selectedHomeProperty.textItems.length - 1,
       ),
     );
   }
 
   void updateTextColor(Color color) {
     if (state.selectedTextIndex == null) return;
-    HomeProperty property = state.properties[state.currentpPropertyIndex];
-    TextItem currentItem = property.textItems[state.selectedTextIndex!];
+    TextItem currentItem =
+        state.selectedHomeProperty.textItems[state.selectedTextIndex!];
     updateTextItem(
       state.selectedTextIndex!,
       currentItem.copyWith(
@@ -103,8 +131,8 @@ class HomeCubit extends Cubit<HomeState> {
 
   void updateTextSize(int size) {
     if (state.selectedTextIndex == null) return;
-    HomeProperty property = state.properties[state.currentpPropertyIndex];
-    TextItem currentItem = property.textItems[state.selectedTextIndex!];
+    TextItem currentItem =
+        state.selectedHomeProperty.textItems[state.selectedTextIndex!];
     updateTextItem(
       state.selectedTextIndex!,
       currentItem.copyWith(
@@ -115,8 +143,8 @@ class HomeCubit extends Cubit<HomeState> {
 
   void updateTextText(String text) {
     if (state.selectedTextIndex == null) return;
-    HomeProperty property = state.properties[state.currentpPropertyIndex];
-    TextItem currentItem = property.textItems[state.selectedTextIndex!];
+    TextItem currentItem =
+        state.selectedHomeProperty.textItems[state.selectedTextIndex!];
     updateTextItem(
       state.selectedTextIndex!,
       currentItem.copyWith(
@@ -126,11 +154,22 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   void updateTextItem(int index, TextItem item) {
-    HomeProperty property = state.properties[state.currentpPropertyIndex];
-    final updatedItems = List<TextItem>.from(property.textItems);
+    final updatedItems =
+        List<TextItem>.from(state.selectedHomeProperty.textItems);
     if (index >= 0 && index < updatedItems.length) {
       updatedItems[index] = item;
-      updateHomeProperty(property.copyWith(textItems: updatedItems));
+      updateHomeProperty(
+          state.selectedHomeProperty.copyWith(textItems: updatedItems));
+    }
+  }
+
+  void updateTempTextItem(int index, TextItem item) {
+    final updatedItems =
+        List<TextItem>.from(state.selectedHomeProperty.textItems);
+    if (index >= 0 && index < updatedItems.length) {
+      updatedItems[index] = item;
+      updateTempHomeProperty(
+          state.selectedHomeProperty.copyWith(textItems: updatedItems));
     }
   }
 
@@ -142,36 +181,36 @@ class HomeCubit extends Cubit<HomeState> {
           property,
         ],
         currentpPropertyIndex: state.currentpPropertyIndex + 1,
+        selectedHomeProperty: property,
       ),
     );
   }
-  // void updateTempHomeProperty(HomeProperty property) {
-  //   emit(
-  //     state.copyWith(
-  //       properties: [
-  //         ...state.properties.getRange(0, state.currentpPropertyIndex + 1),
-  //         property,
-  //       ],
-  //       currentpPropertyIndex: state.currentpPropertyIndex + 1,
-  //     ),
-  //   );
-  // }
+
+  void updateTempHomeProperty(HomeProperty property) {
+    emit(
+      state.copyWith(
+        selectedHomeProperty: property,
+      ),
+    );
+  }
 
   void undo() {
     if (state.currentpPropertyIndex <= 0) return;
     emit(
       state.copyWith(
         currentpPropertyIndex: state.currentpPropertyIndex - 1,
+        selectedHomeProperty: state.properties[state.currentpPropertyIndex - 1],
         selectedTextIndex: null,
       ),
     );
   }
 
   void redo() {
-    if (state.currentpPropertyIndex >= state.properties.length) return;
+    if (state.currentpPropertyIndex + 1 >= state.properties.length) return;
     emit(
       state.copyWith(
         currentpPropertyIndex: state.currentpPropertyIndex + 1,
+        selectedHomeProperty: state.properties[state.currentpPropertyIndex + 1],
         selectedTextIndex: null,
       ),
     );
