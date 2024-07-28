@@ -1,0 +1,195 @@
+import 'dart:math';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+class FontsDropDown extends StatefulWidget {
+  final Function(String)? onSelected;
+  final String label;
+  final OverlayPortalController controller;
+  final void Function() hideDropDown;
+  final void Function() showDropDown;
+  final String value;
+  // final FocusNode focusNode;
+
+  const FontsDropDown({
+    super.key,
+    this.onSelected,
+    required this.label,
+    required this.controller,
+    required this.hideDropDown,
+    required this.showDropDown,
+    required this.value,
+    // required this.focusNode,
+  });
+
+  @override
+  State<FontsDropDown> createState() => FontsDropDownState();
+}
+
+class FontsDropDownState extends State<FontsDropDown> {
+  final _link = LayerLink();
+  final GlobalKey _anchorKey = GlobalKey();
+  final ScrollController _dropdownscrollController = ScrollController();
+  late TextEditingController _textController;
+  List<String> displayedFontNames = [];
+  List<String> filteredFontNames = [];
+  List<String> fontNames = [];
+  int currentPage = 1;
+  bool loadingMore = false;
+  bool canLoadmore = true;
+  final int itemsPerPage = 20;
+  late int pagesCount;
+
+  @override
+  void initState() {
+    super.initState();
+    Map<String, TextStyle Function()> fontMap = GoogleFonts.asMap();
+    fontNames = fontMap.keys.toList();
+    displayedFontNames = fontNames.take(itemsPerPage).toList();
+    pagesCount = (fontNames.length / itemsPerPage).ceil();
+    _textController = TextEditingController(text: widget.value);
+    _textController.addListener(onFilter);
+    _dropdownscrollController.addListener(() {
+      if (_dropdownscrollController.position.pixels ==
+          _dropdownscrollController.position.maxScrollExtent) {
+        loadMore();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _dropdownscrollController.dispose();
+    super.dispose();
+  }
+
+  void onFilter() {
+    String query = _textController.text;
+    filteredFontNames = fontNames
+        .where((item) => item.toLowerCase().contains(query.toLowerCase()))
+        .take(20)
+        .toList();
+    setState(() {});
+  }
+
+  void loadMore() async {
+    if (loadingMore || !canLoadmore) {
+      return;
+    }
+    setState(() {
+      loadingMore = true;
+    });
+
+    if (pagesCount <= currentPage) {
+      setState(() {
+        canLoadmore = false;
+        loadingMore = false;
+      });
+      return;
+    }
+    setState(() {
+      canLoadmore = true;
+    });
+    displayedFontNames.addAll(
+      fontNames.getRange(
+        currentPage * itemsPerPage,
+        min(
+          ((currentPage + 1) * itemsPerPage),
+          fontNames.length,
+        ),
+      ),
+    );
+    if (context.mounted) {
+      setState(() {
+        loadingMore = false;
+        currentPage++;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CompositedTransformTarget(
+      link: _link,
+      child: OverlayPortal(
+        controller: widget.controller,
+        overlayChildBuilder: (BuildContext context) {
+          return CompositedTransformFollower(
+            link: _link,
+            showWhenUnlinked: false,
+            targetAnchor: Alignment.bottomLeft,
+            child: Align(
+              alignment: AlignmentDirectional.topStart,
+              child: Material(
+                elevation: 3.0,
+                color: Colors.white,
+                child: SizedBox(
+                  width: getWidth(_anchorKey),
+                  height: 300.h,
+                  child: ListView.builder(
+                    controller: _dropdownscrollController,
+                    itemCount: _textController.text.isEmpty
+                        ? displayedFontNames.length + 1
+                        : filteredFontNames.length,
+                    itemBuilder: (context, index) {
+                      if (index >= displayedFontNames.length) {
+                        return const CircularProgressIndicator();
+                      }
+                      return ListTile(
+                        title: Text(
+                          _textController.text.isEmpty
+                              ? displayedFontNames[index]
+                              : filteredFontNames[index],
+                          style: GoogleFonts.getFont(
+                            _textController.text.isEmpty
+                                ? displayedFontNames[index]
+                                : filteredFontNames[index],
+                            color: Colors.black,
+                            fontSize: 18.sp,
+                          ),
+                        ),
+                        // title: Text(index.toString()),
+                        onTap: () {
+                          widget.hideDropDown();
+                          widget.onSelected?.call(displayedFontNames[index]);
+                          _textController.text = displayedFontNames[index];
+                          setState(() {});
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+        child: GestureDetector(
+          key: _anchorKey,
+          child: TextFormField(
+            key: ValueKey(widget.value),
+            controller: _textController,
+            onTap: () {
+              widget.showDropDown();
+            },
+            // focusNode: widget.focusNode,
+            decoration: InputDecoration(
+              labelText: widget.label,
+            ),
+            // enabled: false,
+          ),
+        ),
+      ),
+    );
+  }
+
+  double? getWidth(GlobalKey key) {
+    final BuildContext? context = key.currentContext;
+    if (context != null) {
+      final RenderBox box = context.findRenderObject()! as RenderBox;
+      return box.hasSize ? box.size.width : null;
+    }
+    return null;
+  }
+}
